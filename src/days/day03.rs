@@ -15,34 +15,28 @@ pub fn solve() -> SolutionPair {
 }
 
 fn part1(input: &str) -> i64 {
-    let mut result: i64 = 0;
+    let mut result = 0;
     let mut input_iter = input.chars().peekable();
 
     while let Some(c) = input_iter.next() {
         match c {
             'm' => {
-                if input_iter.next() == Some('u')
-                    && input_iter.next() == Some('l')
-                    && input_iter.next() == Some('(')
+                if input_iter.next_if(|&c| c == 'u').is_some()
+                    && input_iter.next_if(|&c| c == 'l').is_some()
+                    && input_iter.next_if(|&c| c == '(').is_some()
                 {
                     let mut num1 = String::new();
-                    while let Some(&c) = input_iter.peek() {
-                        if !c.is_digit(10) {
-                            break;
-                        }
-                        num1.push(input_iter.next().unwrap());
+                    while let Some(d) = input_iter.next_if(|c| c.is_digit(10)) {
+                        num1.push(d);
                     }
 
-                    if input_iter.next() == Some(',') {
+                    if input_iter.next_if(|&c| c == ',').is_some() {
                         let mut num2 = String::new();
-                        while let Some(&c) = input_iter.peek() {
-                            if !c.is_digit(10) {
-                                break;
-                            }
-                            num2.push(input_iter.next().unwrap());
+                        while let Some(d) = input_iter.next_if(|c| c.is_digit(10)) {
+                            num2.push(d);
                         }
 
-                        if input_iter.next() == Some(')') {
+                        if input_iter.next_if(|&c| c == ')').is_some() {
                             if let (Ok(n1), Ok(n2)) = (num1.parse::<i64>(), num2.parse::<i64>()) {
                                 result += n1 * n2;
                             }
@@ -53,7 +47,6 @@ fn part1(input: &str) -> i64 {
             _ => continue,
         }
     }
-
     result
 }
 
@@ -71,28 +64,22 @@ fn part2(input: &str) -> i64 {
     while let Some(c) = input_iter.next() {
         match c {
             'm' => {
-                if input_iter.next() == Some('u')
-                    && input_iter.next() == Some('l')
-                    && input_iter.next() == Some('(')
+                if input_iter.next_if(|&c| c == 'u').is_some()
+                    && input_iter.next_if(|&c| c == 'l').is_some()
+                    && input_iter.next_if(|&c| c == '(').is_some()
                 {
                     let mut num1 = String::new();
-                    while let Some(&c) = input_iter.peek() {
-                        if !c.is_digit(10) {
-                            break;
-                        }
-                        num1.push(input_iter.next().unwrap());
+                    while let Some(d) = input_iter.next_if(|c| c.is_digit(10)) {
+                        num1.push(d);
                     }
 
                     if input_iter.next() == Some(',') {
                         let mut num2 = String::new();
-                        while let Some(&c) = input_iter.peek() {
-                            if !c.is_digit(10) {
-                                break;
-                            }
-                            num2.push(input_iter.next().unwrap());
+                        while let Some(d) = input_iter.next_if(|c| c.is_digit(10)) {
+                            num2.push(d);
                         }
 
-                        if input_iter.next() == Some(')') {
+                        if input_iter.next_if(|&c| c == ')').is_some() {
                             if let (Ok(n1), Ok(n2)) = (num1.parse::<i64>(), num2.parse::<i64>()) {
                                 if mul_switch == MulSwitch::Do {
                                     result += n1 * n2;
@@ -103,11 +90,11 @@ fn part2(input: &str) -> i64 {
                 }
             }
             'd' => {
-                if input_iter.next() == Some('o') {
+                if input_iter.next_if(|&c| c == 'o').is_some() {
                     mul_switch = MulSwitch::Do;
-                    if input_iter.next() == Some('n')
-                        && input_iter.next() == Some('\'')
-                        && input_iter.next() == Some('t')
+                    if input_iter.next_if(|&c| c == 'n').is_some()
+                        && input_iter.next_if(|&c| c == '\'').is_some()
+                        && input_iter.next_if(|&c| c == 't').is_some()
                     {
                         mul_switch = MulSwitch::Dont;
                     }
@@ -126,7 +113,7 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        let input = "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))";
+        let input = "xmmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))";
         let result = part1(input);
 
         assert_eq!(result, 161);
