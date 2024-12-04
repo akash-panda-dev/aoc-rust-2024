@@ -113,7 +113,7 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        let input = "xmmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))";
+        let input = "xmul(mul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))";
         let result = part1(input);
 
         assert_eq!(result, 161);
