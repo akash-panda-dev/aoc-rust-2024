@@ -62,27 +62,25 @@ fn part1(input: &str) -> usize {
     // Zig Zag check
     for row in 0..num_rows - 3 {
         for col in 0..num_cols - 3 {
-            let sequence = [
+            let zig = [
                 grid[row][col],
                 grid[row + 1][col + 1],
                 grid[row + 2][col + 2],
                 grid[row + 3][col + 3],
             ];
-            if XMAS == sequence || SAMX == sequence {
-                xmas_count += 1;
-            }
-        }
-    }
 
-    for row in 0..num_rows - 3 {
-        for col in 0..num_cols - 3 {
-            let sequence = [
+            let zag = [
                 grid[row][col + 3],
                 grid[row + 1][col + 2],
                 grid[row + 2][col + 1],
                 grid[row + 3][col],
             ];
-            if XMAS == sequence || SAMX == sequence {
+
+            if XMAS == zig || SAMX == zig {
+                xmas_count += 1;
+            }
+
+            if XMAS == zag || SAMX == zag {
                 xmas_count += 1;
             }
         }
