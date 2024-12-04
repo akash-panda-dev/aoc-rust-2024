@@ -69,16 +69,16 @@ fn part1(input: &str) -> usize {
                 grid[row + 3][col + 3],
             ];
 
+            if XMAS == zig || SAMX == zig {
+                xmas_count += 1;
+            }
+
             let zag = [
                 grid[row][col + 3],
                 grid[row + 1][col + 2],
                 grid[row + 2][col + 1],
                 grid[row + 3][col],
             ];
-
-            if XMAS == zig || SAMX == zig {
-                xmas_count += 1;
-            }
 
             if XMAS == zag || SAMX == zag {
                 xmas_count += 1;
@@ -112,10 +112,8 @@ fn part2(input: &str) -> usize {
                 grid[row + 2][col],
             ];
 
-            if SAM == sequence1 || MAS == sequence1 {
-                if SAM == sequence2 || MAS == sequence2 {
-                    xmas_count += 1;
-                }
+            if (SAM == sequence1 || MAS == sequence1) && (SAM == sequence2 || MAS == sequence2) {
+                xmas_count += 1;
             }
         }
     }
