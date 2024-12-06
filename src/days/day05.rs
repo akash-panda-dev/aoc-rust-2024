@@ -79,23 +79,21 @@ fn part2(input: &str) -> usize {
 }
 
 fn build_adjacency_map(rules_lines: &str) -> HashMap<usize, HashSet<usize>> {
-    let mut adj_map: HashMap<usize, HashSet<usize>> = HashMap::new();
-    for line in rules_lines.lines() {
-        let mut parts = line.trim().split("|");
-        let first = parts.next().unwrap().parse::<usize>().unwrap();
-        let second = parts.next().unwrap().parse::<usize>().unwrap();
+    rules_lines
+        .lines()
+        .map(|line| {
+            let mut parts = line.trim().split("|");
+            (
+                parts.next().unwrap().parse::<usize>().unwrap(),
+                parts.next().unwrap().parse::<usize>().unwrap(),
+            )
+        })
+        .fold(HashMap::new(), |mut adj_map, (first, second)| {
+            adj_map
+                .entry(first)
+                .or_insert_with(HashSet::new)
+                .insert(second);
 
-        adj_map
-            .entry(first)
-            .and_modify(|s| {
-                s.insert(second);
-            })
-            .or_insert_with(|| {
-                let mut neighbors = HashSet::new();
-                neighbors.insert(second);
-                neighbors
-            });
-    }
-
-    adj_map
+            adj_map
+        })
 }
