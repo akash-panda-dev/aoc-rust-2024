@@ -1,0 +1,22 @@
+use crate::{Solution, SolutionPair};
+use std::fs::read_to_string;
+
+///////////////////////////////////////////////////////////////////////////////
+
+pub fn solve() -> SolutionPair {
+    let input = read_to_string("./input/day5.txt").unwrap();
+    let sol1: u64 = 0;
+    let sol2: u64 = 0;
+
+    (Solution::from(sol1), Solution::from(sol2))
+}
+
+fn part1(input: &str) -> usize {
+    let parts = input.split("\n\n").unzip();
+
+    todo!()
+}
+
+fn build_adjacency_list() {
+    todo!()
+}
