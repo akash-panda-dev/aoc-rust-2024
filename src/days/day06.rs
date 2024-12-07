@@ -1,8 +1,5 @@
 use crate::{Solution, SolutionPair};
-use std::{
-    collections::{HashMap, HashSet},
-    fs::read_to_string,
-};
+use std::{collections::HashSet, fs::read_to_string};
 
 pub fn solve() -> SolutionPair {
     let input = read_to_string("./input/day6.txt").unwrap();
@@ -106,6 +103,7 @@ fn part1(input: &str) -> u64 {
 
 fn part2(input: &str) -> u64 {
     let (grid, mut pos) = parse(input);
+    let start_pos = pos;
     let mut visited = HashSet::new();
     let mut dir = Direction::Up;
     let mut possible_loopy_pos = HashSet::new();
@@ -115,16 +113,10 @@ fn part2(input: &str) -> u64 {
     loop {
         let next_pos = dir.next_position(pos);
 
-        // Exit if we go outside the grid
         if grid.is_outside(next_pos) {
             break;
         }
 
-        if is_cycle_present(pos, grid.clone(), dir, next_pos) {
-            possible_loopy_pos.insert(next_pos);
-        }
-
-        // Turn right if we hit an obstacle, otherwise move forward
         if grid.obstacles.contains(&next_pos) {
             dir = dir.turn_right();
         } else {
@@ -133,28 +125,27 @@ fn part2(input: &str) -> u64 {
         }
     }
 
+    for v in visited {
+        if will_it_loop(start_pos, grid.clone(), v) {
+            possible_loopy_pos.insert(v);
+        }
+    }
+
     possible_loopy_pos.len() as u64
 }
 
-fn is_cycle_present(
-    start_pos: Position,
-    grid: Grid,
-    start_dir: Direction,
-    possible_obstacle: Position,
-) -> bool {
+fn will_it_loop(start_pos: Position, grid: Grid, possible_obstacle: Position) -> bool {
     let mut visited = HashSet::new();
     let mut pos = start_pos;
-    let mut dir = start_dir;
+    let mut dir = Direction::Up;
     let mut grid = grid;
     grid.obstacles.insert(possible_obstacle);
 
-    // Store both position and direction in visited to detect cycles
     visited.insert((pos, dir));
 
     loop {
         let next_pos = dir.next_position(pos);
 
-        // Exit if we go outside the grid
         if grid.is_outside(next_pos) {
             return false;
         }
