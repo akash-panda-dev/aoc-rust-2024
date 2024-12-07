@@ -1,13 +1,35 @@
 use crate::{Solution, SolutionPair};
 use std::fs::read_to_string;
 
+pub fn solve() -> SolutionPair {
+    let input = read_to_string("./input/day6.txt").unwrap();
+    let sol1 = part1(&input);
+    let sol2 = part2(&input);
+    (Solution::from(sol1), Solution::from(sol2))
+}
+
+fn part1(input: &str) -> u64 {
+    let (grid, start_pos) = parse(input);
+    trace_path(&grid, start_pos).len() as u64
+}
+
+fn part2(input: &str) -> u64 {
+    let (grid, start_pos) = parse(input);
+    let visited = trace_path(&grid, start_pos);
+
+    visited
+        .iter()
+        .filter(|&&pos| will_it_loop(start_pos, grid.clone(), pos))
+        .count() as u64
+}
+
 // Use u8 for compact direction representation
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
 enum Direction {
-    Up = 0,
-    Right = 1,
-    Down = 2,
-    Left = 3,
+    Up,
+    Right,
+    Down,
+    Left,
 }
 
 // Use packed coordinates for Position
@@ -51,10 +73,8 @@ impl Direction {
     }
 }
 
-// Use a more efficient grid representation
 #[derive(Clone)]
 struct Grid {
-    // Use a Vec<bool> instead of HashSet for obstacle lookup
     obstacles: Vec<Vec<bool>>,
     rows: i16,
     cols: i16,
@@ -62,12 +82,12 @@ struct Grid {
 
 impl Grid {
     #[inline(always)]
-    fn is_outside(&self, pos: Position) -> bool {
+    fn is_pos_outside(&self, pos: Position) -> bool {
         pos.row < 0 || pos.col < 0 || pos.row >= self.rows || pos.col >= self.cols
     }
 
     #[inline(always)]
-    fn has_obstacle(&self, pos: &Position) -> bool {
+    fn pos_has_obstacle(&self, pos: &Position) -> bool {
         self.obstacles[pos.row as usize][pos.col as usize]
     }
 
@@ -81,7 +101,6 @@ fn parse(input: &str) -> (Grid, Position) {
     let rows = lines.len() as i16;
     let cols = lines[0].len() as i16;
 
-    // Pre-allocate with capacity
     let mut obstacles = vec![vec![false; cols as usize]; rows as usize];
     let mut start_pos = Position { row: 0, col: 0 };
 
@@ -119,11 +138,11 @@ fn trace_path(grid: &Grid, start_pos: Position) -> Vec<Position> {
 
     loop {
         let next_pos = dir.next_position(pos);
-        if grid.is_outside(next_pos) {
+        if grid.is_pos_outside(next_pos) {
             break;
         }
 
-        if grid.has_obstacle(&next_pos) {
+        if grid.pos_has_obstacle(&next_pos) {
             dir = dir.turn_right();
         } else {
             pos = next_pos;
@@ -146,11 +165,11 @@ fn will_it_loop(start_pos: Position, mut grid: Grid, possible_obstacle: Position
 
     loop {
         let next_pos = dir.next_position(pos);
-        if grid.is_outside(next_pos) {
+        if grid.is_pos_outside(next_pos) {
             return false;
         }
 
-        if grid.has_obstacle(&next_pos) {
+        if grid.pos_has_obstacle(&next_pos) {
             dir = dir.turn_right();
         } else {
             pos = next_pos;
@@ -161,27 +180,3 @@ fn will_it_loop(start_pos: Position, mut grid: Grid, possible_obstacle: Position
         }
     }
 }
-
-pub fn solve() -> SolutionPair {
-    let input = read_to_string("./input/day6.txt").unwrap();
-    let sol1 = part1(&input);
-    let sol2 = part2(&input);
-    (Solution::from(sol1), Solution::from(sol2))
-}
-
-fn part1(input: &str) -> u64 {
-    let (grid, start_pos) = parse(input);
-    trace_path(&grid, start_pos).len() as u64
-}
-
-fn part2(input: &str) -> u64 {
-    let (grid, start_pos) = parse(input);
-    let visited = trace_path(&grid, start_pos);
-
-    visited
-        .iter()
-        .filter(|&&pos| will_it_loop(start_pos, grid.clone(), pos))
-        .count() as u64
-}
-
-
